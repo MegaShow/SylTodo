@@ -10,7 +10,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="listColumn" Width="5*"/>
-            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition x:Name="detailColumn" Width="4*"/>
         </Grid.ColumnDefinitions>
         <Frame x:Name="listFrame" Grid.Column="0">
             <Rectangle Fill="Orange" Height="Auto" Width="Auto"/>

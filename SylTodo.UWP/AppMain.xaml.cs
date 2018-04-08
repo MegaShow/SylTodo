@@ -23,5 +23,11 @@ namespace SylTodo.UWP {
             this.InitializeComponent();
             contentFrame.Navigate(typeof(TodoMain));
         }
+
+        private void AppBarButton_Click_Add(object sender, RoutedEventArgs e) {
+            if (TodoMain.Current.State == "OnlyListState") {
+                TodoMain.Current.StateChange("OnlyDetailState");
+            }
+        }
     }
 }
