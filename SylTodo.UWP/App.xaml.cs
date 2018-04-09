@@ -5,8 +5,11 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -71,6 +74,11 @@ namespace SylTodo.UWP
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();
             }
+
+            ApplicationView view = ApplicationView.GetForCurrentView();
+            view.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            CoreApplicationView coreView = CoreApplication.GetCurrentView();
+            coreView.TitleBar.ExtendViewIntoTitleBar = true;
         }
 
         /// <summary>

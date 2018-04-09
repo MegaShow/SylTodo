@@ -7,10 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Background>
+        <ImageBrush ImageSource="Assets/background.png" Stretch="UniformToFill"/>
+    </Page.Background>
     <NavigationView
+        x:Name="nav"
+        AlwaysShowHeader="False"
         ExpandedModeThresholdWidth="1220"
-        IsSettingsVisible="True"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        IsSettingsVisible="True">
 
         <NavigationView.MenuItems>
             <NavigationViewItem Icon="AllApps" Content="所有" Tag="All"/>
@@ -26,14 +30,14 @@
             </NavigationViewItem>
             <NavigationViewItem Icon="Delete" Content="垃圾箱" Tag="Trash"/>
         </NavigationView.MenuItems>
-        
+
         <NavigationView.AutoSuggestBox>
             <AutoSuggestBox QueryIcon="Find"/>
         </NavigationView.AutoSuggestBox>
-        
+
         <NavigationView.HeaderTemplate>
             <DataTemplate>
-                <Grid Margin="24,10,0,0">
+                <Grid Margin="24,29.5,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -46,13 +50,12 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             DefaultLabelPosition="Right"
-                            Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
+                            Background="{Binding ElementName=nav, Path=Background}">
                         <AppBarButton Label="添加任务" Icon="Add" Click="AppBarButton_Click_Add"/>
                     </CommandBar>
                 </Grid>
             </DataTemplate>
         </NavigationView.HeaderTemplate>
-        
         <Frame x:Name="contentFrame"/>
     </NavigationView>
 </Page>

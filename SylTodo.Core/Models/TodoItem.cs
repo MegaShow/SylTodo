@@ -4,7 +4,7 @@ using System.Text;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace SylTodo.Core.Models {
-    class TodoItem {
+    public class TodoItem {
         public string title;
         public string description;
         public DateTime dueDate;

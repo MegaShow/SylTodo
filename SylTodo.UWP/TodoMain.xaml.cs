@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace SylTodo.UWP {
@@ -28,6 +29,8 @@ namespace SylTodo.UWP {
             this.InitializeComponent();
             Current = this;
             this.SizeChanged += StateManage;
+            listFrame.Navigate(typeof(TodoList));
+            detailFrame.Navigate(typeof(TodoDetail));
         }
 
         public bool StateChange(string newState) {
