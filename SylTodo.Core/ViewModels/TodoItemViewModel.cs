@@ -29,5 +29,13 @@ namespace SylTodo.Core.ViewModels {
         public void Update(int itemIndex, string title, string description, DateTime dueDate, string category, BitmapImage image) {
 
         }
+
+        public void UpdateTitle(int selectedIndex, string title) {
+            collection[selectedIndex].Title = title;
+        }
+
+        public void UpdateDescription(int selectedIndex, string description) {
+            collection[selectedIndex].Description = description;
+        }
     }
 }

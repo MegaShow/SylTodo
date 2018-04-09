@@ -99,6 +99,7 @@
     <Compile Include="AppMain.xaml.cs">
       <DependentUpon>AppMain.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\BooleanToColorsConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TodoDetail.xaml.cs">
       <DependentUpon>TodoDetail.xaml</DependentUpon>

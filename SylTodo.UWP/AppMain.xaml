@@ -14,7 +14,8 @@
         x:Name="nav"
         AlwaysShowHeader="False"
         ExpandedModeThresholdWidth="1220"
-        IsSettingsVisible="True">
+        IsSettingsVisible="True"
+        DisplayModeChanged="DisplayModeChanged">
 
         <NavigationView.MenuItems>
             <NavigationViewItem Icon="AllApps" Content="所有" Tag="All"/>

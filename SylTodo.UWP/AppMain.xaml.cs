@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,6 +28,16 @@ namespace SylTodo.UWP {
         private void AppBarButton_Click_Add(object sender, RoutedEventArgs e) {
             if (TodoMain.Current.State == "OnlyListState") {
                 TodoMain.Current.StateChange("OnlyDetailState");
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                       AppViewBackButtonVisibility.Visible;
+            }
+        }
+
+        private void DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args) {
+            if (args.DisplayMode == NavigationViewDisplayMode.Minimal) {
+                TodoList.Current.SetHeaderVisibility("Minimal");
+            } else {
+                TodoList.Current.SetHeaderVisibility("Other");
             }
         }
     }

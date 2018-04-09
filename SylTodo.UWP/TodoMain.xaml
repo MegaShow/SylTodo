@@ -14,27 +14,5 @@
         </Grid.ColumnDefinitions>
         <Frame x:Name="listFrame" Grid.Column="0"/>
         <Frame x:Name="detailFrame" Grid.Column="1"/>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="OnlyListState">
-                    <VisualState.Setters>
-                        <Setter Target="listFrame.Visibility" Value="Visible"/>
-                        <Setter Target="detailFrame.Visibility" Value="Collapsed"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="OnlyDetailState">
-                    <VisualState.Setters>
-                        <Setter Target="listFrame.Visibility" Value="Collapsed"/>
-                        <Setter Target="detailFrame.Visibility" Value="Visible"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="ListAndDetailState">
-                    <VisualState.Setters>
-                        <Setter Target="listFrame.Visibility" Value="Visible"/>
-                        <Setter Target="detailFrame.Visibility" Value="Visible"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Grid>
+        <Grid x:Name="init" Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="50"/>
@@ -16,15 +16,32 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="1" Text="点击任务标题查看详情" FontSize="24" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Grid>
-        <Grid Padding="30,30,30,30">
+        <Grid x:Name="edit" Visibility="Collapsed" Padding="30,30,30,30">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="80"/>
             </Grid.RowDefinitions>
-            <TextBox x:Name="title" Grid.Row="0" Header="标题" Height="60"/>
-            <TextBox x:Name="description" Grid.Row="1" Header="详情"/>
+            <TextBox x:Name="title" Grid.Row="0" Header="标题" Height="60" LostFocus="title_LostFocus"/>
+            <TextBox x:Name="description" Grid.Row="1" Header="详情" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     MinHeight="60" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="Wrap" LostFocus="description_LostFocus"/>
             <DatePicker x:Name="dueDate" Grid.Row="2" Header="截止日期" MaxWidth="Infinity" HorizontalAlignment="Stretch"/>
         </Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Init">
+                    <VisualState.Setters>
+                        <Setter Target="init.Visibility" Value="Visible"/>
+                        <Setter Target="edit.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Edit">
+                    <VisualState.Setters>
+                        <Setter Target="init.Visibility" Value="Collapsed"/>
+                        <Setter Target="edit.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>
