@@ -7,7 +7,9 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -30,16 +32,16 @@ namespace SylTodo.UWP.Views {
         public TodoMain() {
             this.InitializeComponent();
             Current = this;
+            BackgroundChange(null);
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             this.SizeChanged += StateManage;
             listFrame.Navigate(typeof(TodoList));
             detailFrame.Navigate(typeof(TodoDetail));
+            Debug.WriteLine($"Json: {Core.Database.GetCollectionJson()}");
         }
 
-        private void OnBackRequested(object sender, BackRequestedEventArgs e) {
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                AppViewBackButtonVisibility.Collapsed;
-            StateChange("OnlyListState");
+        public void BackgroundChange(BitmapImage image) {
+            AppMain.Current.BackgroundImage = image;
         }
 
         public bool StateChange(string newState) {
@@ -92,6 +94,24 @@ namespace SylTodo.UWP.Views {
             }
             if (newState != state) {
                 StateChange(newState);
+            }
+        }
+
+        private void OnBackRequested(object sender, BackRequestedEventArgs e) {
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                AppViewBackButtonVisibility.Collapsed;
+            StateChange("OnlyListState");
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e) {
+            base.OnNavigatedTo(e);
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.State")) {
+                string state = ApplicationData.Current.LocalSettings.Values["TodoMain.State"] as string;
+                if (state == "OnlyDetailState") {
+                    ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
+                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+                    StateChange("OnlyDetailState");
+                }
             }
         }
     }

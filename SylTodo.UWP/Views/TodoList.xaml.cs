@@ -12,6 +12,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -34,23 +35,39 @@ namespace SylTodo.UWP.Views {
         public TodoList() {
             this.InitializeComponent();
             Current = this;
+            UpdateListViewEmptyVisibility();
         }
 
         public void SetHeaderVisibility(string displayMode) {
             VisualStateManager.GoToState(this, displayMode, true);
         }
 
+        public void UpdateListViewEmptyVisibility() {
+            if (viewModel.Collection != null && viewModel.Collection.Count != 0) {
+                init.Visibility = Visibility.Collapsed;
+            } else {
+                init.Visibility = Visibility.Visible;
+            }
+        }
+
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             TodoItem item = listView.SelectedItem as TodoItem;
             if (item != null) {
                 TodoMain.Current.StateFromListToDetail(item, listView.SelectedIndex);
+                TodoMain.Current.BackgroundChange(item.Image);
             }
         }
 
-        private void title_KeyDown(object sender, KeyRoutedEventArgs e) {
+        private async void title_KeyDown(object sender, KeyRoutedEventArgs e) {
             if (e.Key == VirtualKey.Enter) {
+                if (title.Text == String.Empty) {
+                    MessageDialog msg = new MessageDialog("标题不能为空");
+                    await msg.ShowAsync();
+                    return;
+                }
                 viewModel.Add(title.Text);
                 title.Text = String.Empty;
+                UpdateListViewEmptyVisibility();
             }
         }
     }

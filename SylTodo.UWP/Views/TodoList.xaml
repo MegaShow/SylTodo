@@ -11,6 +11,7 @@
 
     <Page.Resources>
         <Converters:BooleanToColorsConverter x:Key="BooleanToColorsConverter"/>
+        <Converters:ItemCollectionToVisibilityConverter x:Key="ItemCollectionToVisibilityConverter"/>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -18,10 +19,21 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="header" Grid.Row="0" Margin="24,0,0,0" Height="60">
-            <TextBlock Text="Welcome" Style="{StaticResource TitleTextBlockStyle}" FontSize="28" VerticalAlignment="Center"/>
+        <Grid x:Name="header" Grid.Row="0" Height="60">
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}"
+                           FontSize="28"
+                           VerticalAlignment="Center"
+                           Text="希娃清单"/>
         </Grid>
-        <TextBox x:Name="title" Grid.Row="1" PlaceholderText="添加任务，回车即可保存" Margin="20,-20,20,10" KeyDown="title_KeyDown"/>
+        <TextBox x:Name="title" Grid.Row="1" PlaceholderText="添加任务，回车即可保存" Margin="20,0,20,10" KeyDown="title_KeyDown"/>
+        <Grid x:Name="init" Grid.Row="2" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="没有任务，放松一下" Foreground="Gray" FontSize="28" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Text="点击下方输入框添加任务" Foreground="Gray" FontSize="16" HorizontalAlignment="Center"/>
+        </Grid>
         <ListView
             x:Name="listView"
             Grid.Row="2"
@@ -29,7 +41,7 @@
             IsItemClickEnabled="True"
             SelectionMode="Single"
             SelectionChanged="listView_SelectionChanged">
-            
+
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="Models:TodoItem">
                     <Grid Margin="10,0,10,0">
@@ -47,16 +59,12 @@
             <VisualStateGroup>
                 <VisualState x:Name="Minimal">
                     <VisualState.Setters>
-                        <Setter Target="header.Visibility" Value="Collapsed"/>
-                        <Setter Target="header.Height" Value="0"/>
-                        <Setter Target="header.Margin" Value="24,0,0,0"/>
+                        <Setter Target="header.Margin" Value="48,0,0,0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Other">
                     <VisualState.Setters>
-                        <Setter Target="header.Visibility" Value="Visible"/>
-                        <Setter Target="header.Height" Value="60"/>
-                        <Setter Target="header.Margin" Value="24,0,0,18"/>
+                        <Setter Target="header.Margin" Value="24,0,0,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

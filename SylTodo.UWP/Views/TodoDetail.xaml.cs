@@ -7,14 +7,21 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
+using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -27,6 +34,9 @@ namespace SylTodo.UWP.Views {
         public static TodoDetail Current;
         private TodoItemViewModel viewModel = Database.ViewModel;
         private int selectedIndex = -1;
+        public int SelectedIndex {
+            get { return selectedIndex; }
+        }
 
         public TodoDetail() {
             this.InitializeComponent();
@@ -37,8 +47,14 @@ namespace SylTodo.UWP.Views {
             VisualStateManager.GoToState(this, newState, true);
         }
 
-        public void EditInit(TodoItem item, int index) {
+        public async void EditInit(TodoItem item, int index) {
             if (selectedIndex != -1) {
+                if (title.Text == String.Empty) {
+                    MessageDialog msg = new MessageDialog("标题不能为空");
+                    await msg.ShowAsync();
+                    title.Text = viewModel.Collection[selectedIndex].Title;
+                    return;
+                }
                 viewModel.UpdateAll(selectedIndex, title.Text, description.Text, dueDate.Date.Date);
             }
             selectedIndex = index;
@@ -47,8 +63,14 @@ namespace SylTodo.UWP.Views {
             dueDate.Date = item.DueDate;
         }
 
-        private void title_LostFocus(object sender, RoutedEventArgs e) {
-            viewModel.UpdateTitle(selectedIndex, title.Text);
+        private async void title_LostFocus(object sender, RoutedEventArgs e) {
+            if (title.Text == String.Empty) {
+                MessageDialog msg = new MessageDialog("标题不能为空");
+                await msg.ShowAsync();
+                title.Text = viewModel.Collection[selectedIndex].Title;
+            } else {
+                viewModel.UpdateTitle(selectedIndex, title.Text);
+            }
         }
 
         private void description_LostFocus(object sender, RoutedEventArgs e) {
@@ -57,6 +79,49 @@ namespace SylTodo.UWP.Views {
 
         private void dueDate_LostFocus(object sender, RoutedEventArgs e) {
             viewModel.UpdateDueDate(selectedIndex, dueDate.Date.Date);
+        }
+
+        private void AppBarButton_Click_Delete(object sender, RoutedEventArgs e) {
+            viewModel.Remove(selectedIndex);
+            selectedIndex = -1;
+            StateChange("Init");
+            TodoList.Current.UpdateListViewEmptyVisibility();
+            TodoMain.Current.BackgroundChange(null);
+        }
+
+        private async void AppBarButton_Click_UploadAsync(object sender, RoutedEventArgs e) {
+            FileOpenPicker picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null) {
+                // Application now has read/write access to the picked file
+                try {
+                    BitmapImage bitmapImage = new BitmapImage();
+                    FileRandomAccessStream stream = (FileRandomAccessStream)await file.OpenAsync(FileAccessMode.Read);
+                    bitmapImage.SetSource(stream);
+                    viewModel.UpdateImage(selectedIndex, bitmapImage);
+                    TodoMain.Current.BackgroundChange(bitmapImage);
+                } catch (Exception) {
+                    MessageDialog msg = new MessageDialog("发生了些小问题，稍后试试吧", "Oops!");
+                    await msg.ShowAsync();
+                }
+            }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e) {
+            base.OnNavigatedTo(e);
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.State")
+                    && ApplicationData.Current.LocalSettings.Values["TodoMain.State"] as string == "OnlyDetailState"
+                    && ApplicationData.Current.LocalSettings.Values.ContainsKey("SelectedIndex")) {
+                int index = Convert.ToInt32(ApplicationData.Current.LocalSettings.Values["SelectedIndex"]);
+                StateChange("Edit");
+                EditInit(viewModel.Collection[index], index);
+            }
         }
     }
 }

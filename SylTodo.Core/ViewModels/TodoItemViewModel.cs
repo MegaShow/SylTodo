@@ -10,6 +10,7 @@ namespace SylTodo.Core.ViewModels {
         private ObservableCollection<TodoItem> collection = new ObservableCollection<TodoItem>();
         public ObservableCollection<TodoItem> Collection {
             get { return collection; }
+            set { collection = value; }
         }
 
         public TodoItemViewModel() {
@@ -26,8 +27,8 @@ namespace SylTodo.Core.ViewModels {
             collection.Add(new TodoItem(title, description, dueDate, category, isChecked, image));
         }
 
-        public void Remove() {
-
+        public void Remove(int itemIndex) {
+            collection.RemoveAt(itemIndex);
         }
 
         public void UpdateAll(int itemIndex, string title, string description, DateTime dueDate) {
@@ -46,6 +47,10 @@ namespace SylTodo.Core.ViewModels {
 
         public void UpdateDueDate(int itemIndex, DateTime dueDate) {
             collection[itemIndex].DueDate = dueDate;
+        }
+
+        public void UpdateImage(int itemIndex, BitmapImage image) {
+            collection[itemIndex].Image = image;
         }
     }
 }

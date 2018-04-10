@@ -52,7 +52,7 @@ namespace SylTodo.Core.Models {
             this.category = category;
             this.isChecked = isChecked;
             if (image == null) {
-                this.image = new BitmapImage(new Uri("ms-appx:///Assets/Square150x150Logo.scale-200.png"));
+                this.image = new BitmapImage(new Uri("ms-appx:///Assets/background.png"));
             } else {
                 this.image = image;
             }

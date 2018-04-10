@@ -1,5 +1,10 @@
-﻿using System;
+﻿using SylTodo.Core.Models;
+using SylTodo.Core.ViewModels;
+using SylTodo.UWP.Views;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -8,6 +13,8 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -16,6 +23,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace SylTodo.UWP {
@@ -38,6 +46,10 @@ namespace SylTodo.UWP {
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e) {
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("Collection")) {
+                Core.Database.RebuildCollection(ApplicationData.Current.LocalSettings.Values["Collection"] as string);
+            }
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
@@ -90,9 +102,31 @@ namespace SylTodo.UWP {
         /// </summary>
         /// <param name="sender">挂起的请求的源。</param>
         /// <param name="e">有关挂起请求的详细信息。</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e) {
+        private async void OnSuspending(object sender, SuspendingEventArgs e) {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 保存应用程序状态并停止任何后台活动
+            ApplicationData.Current.LocalSettings.Values["Collection"] = Core.Database.GetCollectionJson();
+            ApplicationData.Current.LocalSettings.Values["SelectedIndex"] = TodoDetail.Current.SelectedIndex;
+            ApplicationData.Current.LocalSettings.Values["TodoMain.State"] = TodoMain.Current.State;
+            //for (int i = 0; i < Core.Database.ViewModel.Collection.Count; i++) {
+            //    StorageFolder pictureFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("BackgroundImages", CreationCollisionOption.OpenIfExists);
+            //    var file = await pictureFolder.CreateFileAsync(i.ToString() + ".jpg", CreationCollisionOption.ReplaceExisting);
+            //    using (var stream = await file.OpenStreamForWriteAsync()) {
+            //        BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream.AsRandomAccessStream());
+            //        var image = Core.Database.ViewModel.Collection[i].Image;
+            //        var bitmap = new WriteableBitmap(image.PixelWidth, image.PixelHeight);
+            //        await bitmap.SetSourceAsync(image.StreamSource);
+            //        wb = wb.Convolute(WriteableBitmapExtensions.KernelGaussianBlur5x5);
+            //        var pixelStream = image.PixelBuffer.AsStream();
+            //        byte[] pixels = new byte[bmp.PixelBuffer.Length];
+
+            //        await pixelStream.ReadAsync(pixels, 0, pixels.Length);
+
+            //        encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, (uint)image.PixelWidth, (uint)image.PixelHeight, 96, 96, pixels);
+
+            //        await encoder.FlushAsync();
+            //    }
+            //}
             deferral.Complete();
         }
     }
