@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-namespace SylTodo.UWP {
+namespace SylTodo.UWP.Views {
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>

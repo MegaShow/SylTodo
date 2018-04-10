@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylTodo.Core.Commons;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -7,71 +8,41 @@ using System.Text;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace SylTodo.Core.Models {
-    public class TodoItem : INotifyPropertyChanged {
+    public class TodoItem : BindableBase {
         private string title;
         public string Title {
             get { return title; }
-            set {
-                if (title != value) {
-                    title = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            set { SetProperty(ref title, value); }
         }
 
         private string description;
         public string Description {
             get { return description; }
-            set {
-                if (description != value) {
-                    description = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            set { SetProperty(ref description, value); }
         }
 
         private DateTime dueDate;
         public DateTime DueDate {
             get { return dueDate; }
-            set {
-                if (dueDate != value.Date) {
-                    dueDate = value.Date;
-                    NotifyPropertyChanged();
-                }
-            }
+            set { SetProperty(ref dueDate, value); }
         }
 
         private string category;
         public string Category {
             get { return category; }
-            set {
-                if (category != value) {
-                    category = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            set { SetProperty(ref category, value); }
         }
 
         private bool isChecked;
         public bool IsChecked {
             get { return isChecked; }
-            set {
-                if (isChecked != value) {
-                    isChecked = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            set { SetProperty(ref isChecked, value); }
         }
 
         private BitmapImage image;
         public BitmapImage Image {
             get { return image; }
-            set {
-                if (image != value) {
-                    image = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            set { SetProperty(ref image, value); }
         }
 
         public TodoItem(string title, string description, DateTime dueDate, string category, bool isChecked, BitmapImage image) {
@@ -85,13 +56,6 @@ namespace SylTodo.Core.Models {
             } else {
                 this.image = image;
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "") {
-            Debug.WriteLine($"{propertyName} - Change");
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

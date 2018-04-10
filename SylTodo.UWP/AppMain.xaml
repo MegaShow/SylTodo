@@ -52,7 +52,7 @@
                             VerticalAlignment="Center"
                             DefaultLabelPosition="Right"
                             Background="{Binding ElementName=nav, Path=Background}">
-                        <AppBarButton Label="添加任务" Icon="Add" Click="AppBarButton_Click_Add"/>
+                        <AppBarButton Label="删除任务" Icon="Delete" Click="AppBarButton_Click_Delete"/>
                     </CommandBar>
                 </Grid>
             </DataTemplate>

@@ -8,7 +8,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 
-namespace SylTodo.UWP.Converter {
+namespace SylTodo.UWP.Converters {
     public class BooleanToColorsConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, string language) {
             bool flag = false;

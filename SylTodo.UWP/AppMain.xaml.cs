@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SylTodo.UWP.Views;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -20,12 +21,15 @@ namespace SylTodo.UWP {
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
     public sealed partial class AppMain : Page {
+        private Visibility listVisibility;
+        private Visibility detailVisibility;
+
         public AppMain() {
             this.InitializeComponent();
             contentFrame.Navigate(typeof(TodoMain));
         }
 
-        private void AppBarButton_Click_Add(object sender, RoutedEventArgs e) {
+        private void AppBarButton_Click_Delete(object sender, RoutedEventArgs e) {
             if (TodoMain.Current.State == "OnlyListState") {
                 TodoMain.Current.StateChange("OnlyDetailState");
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
@@ -38,6 +42,11 @@ namespace SylTodo.UWP {
                 TodoList.Current.SetHeaderVisibility("Minimal");
             } else {
                 TodoList.Current.SetHeaderVisibility("Other");
+            }
+            if (TodoMain.Current.State == "OnlyListState") {
+                detailVisibility = Visibility.Collapsed;
+            } else {
+                detailVisibility = Visibility.Visible;
             }
         }
     }

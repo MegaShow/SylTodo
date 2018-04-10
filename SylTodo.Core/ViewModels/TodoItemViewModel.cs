@@ -18,6 +18,10 @@ namespace SylTodo.Core.ViewModels {
                 "change the world.Indeed, it is the only thing that ever has.", DateTime.Now.Date);
         }
 
+        public void Add(string title) {
+            collection.Add(new TodoItem(title, String.Empty, DateTime.Now, "收集箱", false, null));
+        }
+
         public void Add(string title, string description, DateTime dueDate, string category = "收集箱", bool isChecked = false, BitmapImage image = null) {
             collection.Add(new TodoItem(title, description, dueDate, category, isChecked, image));
         }
@@ -26,16 +30,22 @@ namespace SylTodo.Core.ViewModels {
 
         }
 
-        public void Update(int itemIndex, string title, string description, DateTime dueDate, string category, BitmapImage image) {
-
+        public void UpdateAll(int itemIndex, string title, string description, DateTime dueDate) {
+            collection[itemIndex].Title = title;
+            collection[itemIndex].Description = description;
+            collection[itemIndex].DueDate = dueDate;
         }
 
-        public void UpdateTitle(int selectedIndex, string title) {
-            collection[selectedIndex].Title = title;
+        public void UpdateTitle(int itemIndex, string title) {
+            collection[itemIndex].Title = title;
         }
 
-        public void UpdateDescription(int selectedIndex, string description) {
-            collection[selectedIndex].Description = description;
+        public void UpdateDescription(int itemIndex, string description) {
+            collection[itemIndex].Description = description;
+        }
+
+        public void UpdateDueDate(int itemIndex, DateTime dueDate) {
+            collection[itemIndex].DueDate = dueDate;
         }
     }
 }

@@ -19,14 +19,14 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace SylTodo.UWP {
+namespace SylTodo.UWP.Views {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class TodoDetail : Page {
         public static TodoDetail Current;
         private TodoItemViewModel viewModel = Database.ViewModel;
-        private int selectedIndex;
+        private int selectedIndex = -1;
 
         public TodoDetail() {
             this.InitializeComponent();
@@ -38,6 +38,9 @@ namespace SylTodo.UWP {
         }
 
         public void EditInit(TodoItem item, int index) {
+            if (selectedIndex != -1) {
+                viewModel.UpdateAll(selectedIndex, title.Text, description.Text, dueDate.Date.Date);
+            }
             selectedIndex = index;
             title.Text = item.Title;
             description.Text = item.Description;
@@ -50,6 +53,10 @@ namespace SylTodo.UWP {
 
         private void description_LostFocus(object sender, RoutedEventArgs e) {
             viewModel.UpdateDescription(selectedIndex, description.Text);
+        }
+
+        private void dueDate_LostFocus(object sender, RoutedEventArgs e) {
+            viewModel.UpdateDueDate(selectedIndex, dueDate.Date.Date);
         }
     }
 }
