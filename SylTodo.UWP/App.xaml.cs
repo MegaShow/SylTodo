@@ -1,5 +1,6 @@
 ﻿using SylTodo.Core.Models;
 using SylTodo.Core.ViewModels;
+using SylTodo.UWP.Tile;
 using SylTodo.UWP.Views;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,7 @@ namespace SylTodo.UWP {
                 var file = await sylTodoFolder.GetFileAsync("data.json");
                 string json = await FileIO.ReadTextAsync(file);
                 Core.Database.RebuildCollection(json);
+                TileGenerator.Update(Core.Database.ViewModel.Collection);
             } catch (Exception exception) {
                 Debug.WriteLine($"{exception.ToString()}");
             }

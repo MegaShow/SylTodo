@@ -26,6 +26,7 @@ namespace SylTodo.UWP {
     /// </summary>
     public sealed partial class AppMain : Page {
         public static AppMain Current;
+        public int Type;
 
         public BitmapImage BackgroundImage {
             set {
@@ -41,6 +42,32 @@ namespace SylTodo.UWP {
             this.InitializeComponent();
             Current = this;
             contentFrame.Navigate(typeof(TodoMain));
+        }
+
+        private async void NavigationView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
+            //先判断是否选中了setting
+            if (args.IsSettingsInvoked) {
+                return;
+            } else {
+                //选中项的内容
+                switch (args.InvokedItem) {
+                    case "所有":
+                        Type = 0;
+                        break;
+                    case "今天":
+                        Type = 1;
+                        break;
+                    case "最近7天":
+                        Type = 2;
+                        break;
+                    case "已完成":
+                        Type = 5;
+                        break;
+                    default:
+                        Type = 0;
+                        break;
+                }
+            }
         }
 
         private void AppBarButton_Click_Delete(object sender, RoutedEventArgs e) {

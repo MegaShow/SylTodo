@@ -15,9 +15,13 @@ namespace SylTodo.Core.ViewModels {
         }
 
         public TodoItemViewModel() {
-            this.Add("欢迎加入希娃清单", "从今天起，希娃清单将伴你开启时间管理之旅。", DateTime.Now);
             this.Add("你好，世界", "Never underestimate the ability of a small group of dedicated people to " +
-                "change the world.Indeed, it is the only thing that ever has.", new DateTime(2017,3,12));
+                "change the world.Indeed, it is the only thing that ever has.", new DateTime(2017, 3, 12));
+            this.Add("欢迎加入希娃清单", "从今天起，希娃清单将伴你开启时间管理之旅。", DateTime.Now);
+        }
+
+        public void SetFilter(int type) {
+            
         }
 
         public void Add(string title) {

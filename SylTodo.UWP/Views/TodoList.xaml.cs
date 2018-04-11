@@ -1,6 +1,7 @@
 ﻿using SylTodo.Core;
 using SylTodo.Core.Models;
 using SylTodo.Core.ViewModels;
+using SylTodo.UWP.Tile;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -68,6 +69,7 @@ namespace SylTodo.UWP.Views {
                 viewModel.Add(title.Text);
                 title.Text = String.Empty;
                 UpdateListViewEmptyVisibility();
+                TileGenerator.Update(Core.Database.ViewModel.Collection);
             }
         }
     }

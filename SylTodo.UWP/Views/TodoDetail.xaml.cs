@@ -1,6 +1,7 @@
 ﻿using SylTodo.Core;
 using SylTodo.Core.Models;
 using SylTodo.Core.ViewModels;
+using SylTodo.UWP.Tile;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -72,14 +73,17 @@ namespace SylTodo.UWP.Views {
             } else {
                 viewModel.UpdateTitle(selectedIndex, title.Text);
             }
+            TileGenerator.Update(Core.Database.ViewModel.Collection);
         }
 
         private void description_LostFocus(object sender, RoutedEventArgs e) {
             viewModel.UpdateDescription(selectedIndex, description.Text);
+            TileGenerator.Update(Core.Database.ViewModel.Collection);
         }
 
         private void dueDate_LostFocus(object sender, RoutedEventArgs e) {
             viewModel.UpdateDueDate(selectedIndex, dueDate.Date.Date);
+            TileGenerator.Update(Core.Database.ViewModel.Collection);
         }
 
         private void AppBarButton_Click_Delete(object sender, RoutedEventArgs e) {
@@ -110,6 +114,7 @@ namespace SylTodo.UWP.Views {
                     var bitmap = await Commons.Convert.ConvertImageToByte(file);
                     viewModel.UpdateImage(selectedIndex, bitmap);
                     TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(bitmap));
+                    TileGenerator.Update(Core.Database.ViewModel.Collection);
                 } catch (Exception) {
                     MessageDialog msg = new MessageDialog("发生了些小问题，稍后试试吧", "Oops!");
                     await msg.ShowAsync();

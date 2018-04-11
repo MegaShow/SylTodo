@@ -22,7 +22,8 @@
         Style="{StaticResource NavigationViewStyle}"
         ExpandedModeThresholdWidth="1220"
         IsSettingsVisible="True"
-        DisplayModeChanged="DisplayModeChanged">
+        DisplayModeChanged="DisplayModeChanged"
+        ItemInvoked="NavigationView_ItemInvoked">
 
         <NavigationView.MenuItems>
             <NavigationViewItem Icon="AllApps" Content="所有" Tag="All"/>
