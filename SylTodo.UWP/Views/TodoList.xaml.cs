@@ -50,11 +50,11 @@ namespace SylTodo.UWP.Views {
             }
         }
 
-        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+        private async void listView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             TodoItem item = listView.SelectedItem as TodoItem;
             if (item != null) {
                 TodoMain.Current.StateFromListToDetail(item, listView.SelectedIndex);
-                TodoMain.Current.BackgroundChange(item.Image);
+                TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(item.Bitmap));
             }
         }
 

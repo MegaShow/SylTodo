@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -101,11 +102,14 @@ namespace SylTodo.UWP.Views {
             if (file != null) {
                 // Application now has read/write access to the picked file
                 try {
-                    BitmapImage bitmapImage = new BitmapImage();
-                    FileRandomAccessStream stream = (FileRandomAccessStream)await file.OpenAsync(FileAccessMode.Read);
-                    bitmapImage.SetSource(stream);
-                    viewModel.UpdateImage(selectedIndex, bitmapImage);
-                    TodoMain.Current.BackgroundChange(bitmapImage);
+                    //BitmapImage bitmapImage = new BitmapImage();
+                    //FileRandomAccessStream stream = (FileRandomAccessStream)await file.OpenAsync(FileAccessMode.Read);
+                    //bitmapImage.SetSource(stream);
+                    //viewModel.UpdateImage(selectedIndex, bitmapImage);
+                    //TodoMain.Current.BackgroundChange(bitmapImage);
+                    var bitmap = await Commons.Convert.ConvertImageToByte(file);
+                    viewModel.UpdateImage(selectedIndex, bitmap);
+                    TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(bitmap));
                 } catch (Exception) {
                     MessageDialog msg = new MessageDialog("发生了些小问题，稍后试试吧", "Oops!");
                     await msg.ShowAsync();
@@ -113,7 +117,7 @@ namespace SylTodo.UWP.Views {
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e) {
+        protected override async void OnNavigatedTo(NavigationEventArgs e) {
             base.OnNavigatedTo(e);
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.State")
                     && ApplicationData.Current.LocalSettings.Values["TodoMain.State"] as string == "OnlyDetailState"
@@ -121,7 +125,21 @@ namespace SylTodo.UWP.Views {
                 int index = Convert.ToInt32(ApplicationData.Current.LocalSettings.Values["SelectedIndex"]);
                 StateChange("Edit");
                 EditInit(viewModel.Collection[index], index);
+                TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(viewModel.Collection[index].Bitmap));
             }
+        }
+
+        private void AppBarButton_Click_Share(object sender, RoutedEventArgs e) {
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
+        }
+
+        private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args) {
+            args.Request.Data.Properties.Title = "分享你的清单";
+            var streamReference = RandomAccessStreamReference.CreateFromStream(await Commons.Convert.ConvertByteToRandomAccessStream(viewModel.Collection[selectedIndex].Bitmap));
+            args.Request.Data.SetBitmap(streamReference);
+            args.Request.Data.SetText($"{title.Text}:\n\n{description.Text}");
         }
     }
 }

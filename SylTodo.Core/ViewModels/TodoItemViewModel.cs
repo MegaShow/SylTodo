@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace SylTodo.Core.ViewModels {
@@ -14,16 +15,16 @@ namespace SylTodo.Core.ViewModels {
         }
 
         public TodoItemViewModel() {
-            this.Add("欢迎加入希娃清单", "从今天起，希娃清单将伴你开启时间管理之旅。", DateTime.Now.Date);
+            this.Add("欢迎加入希娃清单", "从今天起，希娃清单将伴你开启时间管理之旅。", DateTime.Now);
             this.Add("你好，世界", "Never underestimate the ability of a small group of dedicated people to " +
-                "change the world.Indeed, it is the only thing that ever has.", DateTime.Now.Date);
+                "change the world.Indeed, it is the only thing that ever has.", new DateTime(2017,3,12));
         }
 
         public void Add(string title) {
             collection.Add(new TodoItem(title, String.Empty, DateTime.Now, "收集箱", false, null));
         }
 
-        public void Add(string title, string description, DateTime dueDate, string category = "收集箱", bool isChecked = false, BitmapImage image = null) {
+        public void Add(string title, string description, DateTimeOffset dueDate, string category = "收集箱", bool isChecked = false, byte[] image = null) {
             collection.Add(new TodoItem(title, description, dueDate, category, isChecked, image));
         }
 
@@ -31,7 +32,7 @@ namespace SylTodo.Core.ViewModels {
             collection.RemoveAt(itemIndex);
         }
 
-        public void UpdateAll(int itemIndex, string title, string description, DateTime dueDate) {
+        public void UpdateAll(int itemIndex, string title, string description, DateTimeOffset dueDate) {
             collection[itemIndex].Title = title;
             collection[itemIndex].Description = description;
             collection[itemIndex].DueDate = dueDate;
@@ -49,8 +50,8 @@ namespace SylTodo.Core.ViewModels {
             collection[itemIndex].DueDate = dueDate;
         }
 
-        public void UpdateImage(int itemIndex, BitmapImage image) {
-            collection[itemIndex].Image = image;
+        public void UpdateImage(int itemIndex, byte[] image) {
+            collection[itemIndex].Bitmap = image;
         }
     }
 }

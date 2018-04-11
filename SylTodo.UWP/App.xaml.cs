@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -45,11 +46,15 @@ namespace SylTodo.UWP {
         /// 将在启动应用程序以打开特定文件等情况下使用。
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e) {
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("Collection")) {
-                Core.Database.RebuildCollection(ApplicationData.Current.LocalSettings.Values["Collection"] as string);
+        protected override async void OnLaunched(LaunchActivatedEventArgs e) {
+            try {
+                var sylTodoFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("SylTodoFolder");
+                var file = await sylTodoFolder.GetFileAsync("data.json");
+                string json = await FileIO.ReadTextAsync(file);
+                Core.Database.RebuildCollection(json);
+            } catch (Exception exception) {
+                Debug.WriteLine($"{exception.ToString()}");
             }
-
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
@@ -105,28 +110,12 @@ namespace SylTodo.UWP {
         private async void OnSuspending(object sender, SuspendingEventArgs e) {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 保存应用程序状态并停止任何后台活动
-            ApplicationData.Current.LocalSettings.Values["Collection"] = Core.Database.GetCollectionJson();
             ApplicationData.Current.LocalSettings.Values["SelectedIndex"] = TodoDetail.Current.SelectedIndex;
             ApplicationData.Current.LocalSettings.Values["TodoMain.State"] = TodoMain.Current.State;
-            //for (int i = 0; i < Core.Database.ViewModel.Collection.Count; i++) {
-            //    StorageFolder pictureFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("BackgroundImages", CreationCollisionOption.OpenIfExists);
-            //    var file = await pictureFolder.CreateFileAsync(i.ToString() + ".jpg", CreationCollisionOption.ReplaceExisting);
-            //    using (var stream = await file.OpenStreamForWriteAsync()) {
-            //        BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream.AsRandomAccessStream());
-            //        var image = Core.Database.ViewModel.Collection[i].Image;
-            //        var bitmap = new WriteableBitmap(image.PixelWidth, image.PixelHeight);
-            //        await bitmap.SetSourceAsync(image.StreamSource);
-            //        wb = wb.Convolute(WriteableBitmapExtensions.KernelGaussianBlur5x5);
-            //        var pixelStream = image.PixelBuffer.AsStream();
-            //        byte[] pixels = new byte[bmp.PixelBuffer.Length];
-
-            //        await pixelStream.ReadAsync(pixels, 0, pixels.Length);
-
-            //        encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, (uint)image.PixelWidth, (uint)image.PixelHeight, 96, 96, pixels);
-
-            //        await encoder.FlushAsync();
-            //    }
-            //}
+            StorageFolder sylTodoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("SylTodoFolder", CreationCollisionOption.OpenIfExists);
+            var file = await sylTodoFolder.CreateFileAsync("data.json", CreationCollisionOption.ReplaceExisting);
+            string json = Core.Database.GetCollectionJson();
+            await FileIO.WriteTextAsync(file, json);
             deferral.Complete();
         }
     }

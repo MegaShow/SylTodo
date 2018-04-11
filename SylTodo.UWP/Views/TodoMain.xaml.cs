@@ -37,7 +37,6 @@ namespace SylTodo.UWP.Views {
             this.SizeChanged += StateManage;
             listFrame.Navigate(typeof(TodoList));
             detailFrame.Navigate(typeof(TodoDetail));
-            Debug.WriteLine($"Json: {Core.Database.GetCollectionJson()}");
         }
 
         public void BackgroundChange(BitmapImage image) {

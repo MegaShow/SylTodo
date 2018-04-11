@@ -13,7 +13,6 @@ namespace SylTodo.UWP.Converters {
     class ItemCollectionToVisibilityConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, string language) {
             ObservableCollection<TodoItem> collection = value as ObservableCollection<TodoItem>;
-            Debug.WriteLine($"{collection} - {collection.Count}");
             if (collection != null && collection.Count != 0) {
                 return Visibility.Collapsed;
             } else {

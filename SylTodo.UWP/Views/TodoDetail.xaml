@@ -29,6 +29,7 @@
                             VerticalAlignment="Center"
                             DefaultLabelPosition="Right"
                             Background="{Binding ElementName=header, Path=Background}">
+                    <AppBarButton Label="分享" Icon="Share" Click="AppBarButton_Click_Share"/>
                     <AppBarButton Label="修改背景" Icon="Pictures" Click="AppBarButton_Click_UploadAsync"/>
                     <AppBarButton Label="删除任务" Icon="Delete" Click="AppBarButton_Click_Delete"/>
                 </CommandBar>
