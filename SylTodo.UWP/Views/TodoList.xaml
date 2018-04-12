@@ -49,8 +49,9 @@
                             <ColumnDefinition Width="42"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="CheckBox" IsChecked="{x:Bind IsChecked, Mode=OneWay}" Grid.Column="0" VerticalAlignment="Center" Height="32" Width="32"/>
-                        <TextBlock Grid.Column="2" Text="{x:Bind Title, Mode=OneWay}" Foreground="{Binding ElementName=CheckBox, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToColorsConverter}}" VerticalAlignment="Center"/>
+                        <CheckBox x:Name="CheckBox" IsChecked="{x:Bind IsChecked, Mode=TwoWay}" Grid.Column="0" VerticalAlignment="Center" Height="32" Width="32"/>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Title, Mode=OneWay}" Foreground="{Binding ElementName=CheckBox, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToColorsConverter}}" VerticalAlignment="Center"/>
+                        <Line x:Name="Line" Grid.Column="1" X1="0" Y1="50" X2="1" Y2="50" Stretch="Fill" Stroke="Gray" StrokeThickness="2" Visibility="{Binding ElementName=CheckBox, Path=IsChecked}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

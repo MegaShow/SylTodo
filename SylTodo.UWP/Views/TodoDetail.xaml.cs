@@ -92,6 +92,7 @@ namespace SylTodo.UWP.Views {
             StateChange("Init");
             TodoList.Current.UpdateListViewEmptyVisibility();
             TodoMain.Current.BackgroundChange(null);
+            TileGenerator.Update(Core.Database.ViewModel.Collection);
         }
 
         private async void AppBarButton_Click_UploadAsync(object sender, RoutedEventArgs e) {

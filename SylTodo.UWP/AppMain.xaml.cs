@@ -31,7 +31,7 @@ namespace SylTodo.UWP {
         public BitmapImage BackgroundImage {
             set {
                 if (value == null) {
-                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+                    background.ImageSource = null;
                 } else {
                     background.ImageSource = value;
                 }
