@@ -1,4 +1,5 @@
-﻿using SylTodo.Core.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SylTodo.Core.Models;
 using SylTodo.Core.ViewModels;
 using SylTodo.UWP.Tile;
 using SylTodo.UWP.Views;
@@ -48,15 +49,15 @@ namespace SylTodo.UWP {
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e) {
-            try {
-                var sylTodoFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("SylTodoFolder");
-                var file = await sylTodoFolder.GetFileAsync("data.json");
-                string json = await FileIO.ReadTextAsync(file);
-                Core.Database.RebuildCollection(json);
-                TileGenerator.Update(Core.Database.ViewModel.Collection);
-            } catch (Exception exception) {
-                Debug.WriteLine($"{exception.ToString()}");
-            }
+            //try {
+            //    var sylTodoFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("SylTodoFolder");
+            //    var file = await sylTodoFolder.GetFileAsync("data.json");
+            //    string json = await FileIO.ReadTextAsync(file);
+            //    Core.Database.RebuildCollection(json);
+            //    //TileGenerator.Update(Core.Database.ViewModel.Collection);
+            //} catch (Exception exception) {
+            //    Debug.WriteLine($"{exception.ToString()}");
+            //}
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
@@ -88,7 +89,6 @@ namespace SylTodo.UWP {
 
             ApplicationView view = ApplicationView.GetForCurrentView();
             view.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-            // view.TitleBar.InactiveBackgroundColor = Colors.Transparent;
             CoreApplicationView coreView = CoreApplication.GetCurrentView();
             coreView.TitleBar.ExtendViewIntoTitleBar = true;
         }
@@ -112,12 +112,12 @@ namespace SylTodo.UWP {
         private async void OnSuspending(object sender, SuspendingEventArgs e) {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 保存应用程序状态并停止任何后台活动
-            ApplicationData.Current.LocalSettings.Values["SelectedIndex"] = TodoDetail.Current.SelectedIndex;
-            ApplicationData.Current.LocalSettings.Values["TodoMain.State"] = TodoMain.Current.State;
-            StorageFolder sylTodoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("SylTodoFolder", CreationCollisionOption.OpenIfExists);
-            var file = await sylTodoFolder.CreateFileAsync("data.json", CreationCollisionOption.ReplaceExisting);
-            string json = Core.Database.GetCollectionJson();
-            await FileIO.WriteTextAsync(file, json);
+            //ApplicationData.Current.LocalSettings.Values["SelectedIndex"] = TodoDetail.Current.SelectedIndex;
+            //ApplicationData.Current.LocalSettings.Values["TodoMain.State"] = TodoMain.Current.State;
+            //StorageFolder sylTodoFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("SylTodoFolder", CreationCollisionOption.OpenIfExists);
+            //var file = await sylTodoFolder.CreateFileAsync("data.json", CreationCollisionOption.ReplaceExisting);
+            //string json = Core.Database.GetCollectionJson();
+            //await FileIO.WriteTextAsync(file, json);
             deferral.Complete();
         }
     }

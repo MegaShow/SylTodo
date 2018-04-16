@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -10,6 +11,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace SylTodo.Core.Models {
     public class TodoItem : BindableBase {
+        [Key]
+        public int Id { get; set; }
+
         private string title;
         public string Title {
             get { return title; }
@@ -37,7 +41,13 @@ namespace SylTodo.Core.Models {
         private bool isChecked;
         public bool IsChecked {
             get { return isChecked; }
-            set { SetProperty(ref isChecked, value); }
+            set {
+                using (var db = new TodoContext()) {
+                    db.Items.Find(Id).isChecked = value;
+                    db.SaveChanges();
+                }
+                SetProperty(ref isChecked, value);
+            }
         }
 
         private byte[] bitmap;
@@ -46,13 +56,16 @@ namespace SylTodo.Core.Models {
             set { SetProperty(ref bitmap, value); }
         }
 
-        public TodoItem(string title, string description, DateTimeOffset dueDate, string category, bool isChecked, byte[] image) {
+        [Obsolete("Only needed for serialization and materialization", true)]
+        public TodoItem() { }
+
+        public TodoItem(string title, string description, DateTimeOffset dueDate, string category, bool isChecked, byte[] bitmap) {
             this.title = title;
             this.description = description;
             this.dueDate = dueDate;
             this.category = category;
             this.isChecked = isChecked;
-            this.bitmap = image;
+            this.bitmap = bitmap;
         }
     }
 }

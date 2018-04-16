@@ -35,10 +35,7 @@ namespace SylTodo.UWP.Views {
     public sealed partial class TodoDetail : Page {
         public static TodoDetail Current;
         private TodoItemViewModel viewModel = Database.ViewModel;
-        private int selectedIndex = -1;
-        public int SelectedIndex {
-            get { return selectedIndex; }
-        }
+        private TodoItem selectedItem = null;
 
         public TodoDetail() {
             this.InitializeComponent();
@@ -50,16 +47,16 @@ namespace SylTodo.UWP.Views {
         }
 
         public async void EditInit(TodoItem item, int index) {
-            if (selectedIndex != -1) {
+            if (selectedItem != null) {
                 if (title.Text == String.Empty) {
                     MessageDialog msg = new MessageDialog("标题不能为空");
                     await msg.ShowAsync();
-                    title.Text = viewModel.Collection[selectedIndex].Title;
+                    title.Text = selectedItem.Title;
                     return;
                 }
-                viewModel.UpdateAll(selectedIndex, title.Text, description.Text, dueDate.Date.Date);
+                viewModel.UpdateAll(selectedItem, title.Text, description.Text, dueDate.Date.Date);
             }
-            selectedIndex = index;
+            selectedItem = item;
             title.Text = item.Title;
             description.Text = item.Description;
             dueDate.Date = item.DueDate;
@@ -69,30 +66,30 @@ namespace SylTodo.UWP.Views {
             if (title.Text == String.Empty) {
                 MessageDialog msg = new MessageDialog("标题不能为空");
                 await msg.ShowAsync();
-                title.Text = viewModel.Collection[selectedIndex].Title;
+                title.Text = selectedItem.Title;
             } else {
-                viewModel.UpdateTitle(selectedIndex, title.Text);
+                viewModel.UpdateTitle(selectedItem, title.Text);
             }
-            TileGenerator.Update(Core.Database.ViewModel.Collection);
+            TileGenerator.Update(Database.ViewModel.Collection);
         }
 
         private void description_LostFocus(object sender, RoutedEventArgs e) {
-            viewModel.UpdateDescription(selectedIndex, description.Text);
-            TileGenerator.Update(Core.Database.ViewModel.Collection);
+            viewModel.UpdateDescription(selectedItem, description.Text);
+            TileGenerator.Update(Database.ViewModel.Collection);
         }
 
         private void dueDate_LostFocus(object sender, RoutedEventArgs e) {
-            viewModel.UpdateDueDate(selectedIndex, dueDate.Date.Date);
-            TileGenerator.Update(Core.Database.ViewModel.Collection);
+            viewModel.UpdateDueDate(selectedItem, dueDate.Date.Date);
+            TileGenerator.Update(Database.ViewModel.Collection);
         }
 
         private void AppBarButton_Click_Delete(object sender, RoutedEventArgs e) {
-            viewModel.Remove(selectedIndex);
-            selectedIndex = -1;
+            viewModel.Remove(selectedItem);
+            selectedItem = null;
             StateChange("Init");
             TodoList.Current.UpdateListViewEmptyVisibility();
             TodoMain.Current.BackgroundChange(null);
-            TileGenerator.Update(Core.Database.ViewModel.Collection);
+            TileGenerator.Update(Database.ViewModel.Collection);
         }
 
         private async void AppBarButton_Click_UploadAsync(object sender, RoutedEventArgs e) {
@@ -105,17 +102,11 @@ namespace SylTodo.UWP.Views {
 
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null) {
-                // Application now has read/write access to the picked file
                 try {
-                    //BitmapImage bitmapImage = new BitmapImage();
-                    //FileRandomAccessStream stream = (FileRandomAccessStream)await file.OpenAsync(FileAccessMode.Read);
-                    //bitmapImage.SetSource(stream);
-                    //viewModel.UpdateImage(selectedIndex, bitmapImage);
-                    //TodoMain.Current.BackgroundChange(bitmapImage);
                     var bitmap = await Commons.Convert.ConvertImageToByte(file);
-                    viewModel.UpdateImage(selectedIndex, bitmap);
+                    viewModel.UpdateBitmap(selectedItem, bitmap);
                     TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(bitmap));
-                    TileGenerator.Update(Core.Database.ViewModel.Collection);
+                    TileGenerator.Update(Database.ViewModel.Collection);
                 } catch (Exception) {
                     MessageDialog msg = new MessageDialog("发生了些小问题，稍后试试吧", "Oops!");
                     await msg.ShowAsync();
@@ -124,15 +115,15 @@ namespace SylTodo.UWP.Views {
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
-            base.OnNavigatedTo(e);
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.State")
-                    && ApplicationData.Current.LocalSettings.Values["TodoMain.State"] as string == "OnlyDetailState"
-                    && ApplicationData.Current.LocalSettings.Values.ContainsKey("SelectedIndex")) {
-                int index = Convert.ToInt32(ApplicationData.Current.LocalSettings.Values["SelectedIndex"]);
-                StateChange("Edit");
-                EditInit(viewModel.Collection[index], index);
-                TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(viewModel.Collection[index].Bitmap));
-            }
+            //base.OnNavigatedTo(e);
+            //if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.State")
+            //        && ApplicationData.Current.LocalSettings.Values["TodoMain.State"] as string == "OnlyDetailState"
+            //        && ApplicationData.Current.LocalSettings.Values.ContainsKey("SelectedIndex")) {
+            //    int index = Convert.ToInt32(ApplicationData.Current.LocalSettings.Values["SelectedIndex"]);
+            //    StateChange("Edit");
+            //    EditInit(viewModel.Collection[index]);
+            //    TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(viewModel.Collection[index].Bitmap));
+            //}
         }
 
         private void AppBarButton_Click_Share(object sender, RoutedEventArgs e) {
@@ -143,7 +134,7 @@ namespace SylTodo.UWP.Views {
 
         private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args) {
             args.Request.Data.Properties.Title = "分享你的清单";
-            var streamReference = RandomAccessStreamReference.CreateFromStream(await Commons.Convert.ConvertByteToRandomAccessStream(viewModel.Collection[selectedIndex].Bitmap));
+            var streamReference = RandomAccessStreamReference.CreateFromStream(await Commons.Convert.ConvertByteToRandomAccessStream(selectedItem.Bitmap));
             args.Request.Data.SetBitmap(streamReference);
             args.Request.Data.SetText($"{title.Text}:\n\n{description.Text}");
         }
