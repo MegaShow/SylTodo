@@ -46,7 +46,7 @@ namespace SylTodo.UWP.Views {
             VisualStateManager.GoToState(this, newState, true);
         }
 
-        public async void EditInit(TodoItem item, int index) {
+        public async void EditInit(TodoItem item) {
             if (selectedItem != null) {
                 if (title.Text == String.Empty) {
                     MessageDialog msg = new MessageDialog("标题不能为空");

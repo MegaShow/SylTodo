@@ -1,4 +1,6 @@
-﻿using SylTodo.UWP.Views;
+﻿using SylTodo.Core;
+using SylTodo.Core.Models;
+using SylTodo.UWP.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -64,10 +66,11 @@ namespace SylTodo.UWP {
                         Type = 5;
                         break;
                     default:
-                        Type = 0;
+                        Type = -1;
                         break;
                 }
             }
+            Database.ViewModel.SetFilter(Type);
         }
 
         private void AppBarButton_Click_Delete(object sender, RoutedEventArgs e) {
@@ -83,6 +86,27 @@ namespace SylTodo.UWP {
                 TodoList.Current.SetHeaderVisibility("Minimal");
             } else {
                 TodoList.Current.SetHeaderVisibility("Other");
+            }
+        }
+
+        private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args) {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput) {
+                sender.ItemsSource = Database.ViewModel.GetTitles().Where(i => i.Contains(sender.Text));
+            }
+        }
+
+        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
+            string txt = args.QueryText;  //输入的文本
+            if (args.ChosenSuggestion != null) {
+                //从提示框中选择某一项时触发
+            } else {
+                //用户在输入时敲回车或者点击右边按钮确认输入时触发
+                List<TodoItem> list = Database.ViewModel.GetListByTitle(txt);
+                if (list.Count == 1) {
+                    TodoMain.Current.StateFromListToDetail(list.First());
+                } else if (list.Count > 1) {
+                    Database.ViewModel.SetFilter(6, list);
+                }
             }
         }
     }

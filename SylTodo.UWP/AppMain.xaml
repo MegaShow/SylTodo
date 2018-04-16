@@ -41,7 +41,7 @@
         </NavigationView.MenuItems>
 
         <NavigationView.AutoSuggestBox>
-            <AutoSuggestBox QueryIcon="Find"/>
+            <AutoSuggestBox QueryIcon="Find" PlaceholderText="根据标题搜索" TextChanged="AutoSuggestBox_TextChanged" QuerySubmitted="AutoSuggestBox_QuerySubmitted"/>
         </NavigationView.AutoSuggestBox>
 
         <NavigationView.HeaderTemplate>

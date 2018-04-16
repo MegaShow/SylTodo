@@ -3,16 +3,25 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace SylTodo.Core.Models {
     public class TodoItem : BindableBase {
         [Key]
         public int Id { get; set; }
+
+        private Visibility filter;
+        [NotMapped]
+        public Visibility Filter {
+            get { return filter; }
+            set { SetProperty(ref filter, value); }
+        }
 
         private string title;
         public string Title {

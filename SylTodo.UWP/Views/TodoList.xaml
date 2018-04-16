@@ -42,9 +42,15 @@
             SelectionMode="Single"
             SelectionChanged="listView_SelectionChanged">
 
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="MinHeight" Value="0" />
+                    <Setter Property="Padding" Value="0,0,0,0" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="Models:TodoItem">
-                    <Grid Margin="10,0,10,0">
+                    <Grid Visibility="{x:Bind Filter, Mode=OneWay}" Margin="20,5,20,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="42"/>
                             <ColumnDefinition Width="*"/>

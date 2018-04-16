@@ -75,9 +75,9 @@ namespace SylTodo.UWP.Views {
             return true;
         }
 
-        public void StateFromListToDetail(TodoItem item, int index) {
+        public void StateFromListToDetail(TodoItem item) {
             TodoDetail.Current.StateChange("Edit");
-            TodoDetail.Current.EditInit(item, index);
+            TodoDetail.Current.EditInit(item);
             double width = Window.Current.Bounds.Width;
             if (width >= 0 && width < 900) {
                 StateChange("OnlyDetailState");

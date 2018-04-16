@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace SylTodo.Core.ViewModels {
@@ -16,6 +17,8 @@ namespace SylTodo.Core.ViewModels {
         public ObservableCollection<TodoItem> Collection {
             get { return collection; }
         }
+
+        private int type = 0; // 0 => 所有, 1 => 今天, 2 => 最近7天, 3 => 收集箱, 4 => 已完成, 5 => 垃圾箱, 
 
         public TodoItemViewModel() {
             using (var db = new TodoContext()) {
@@ -31,6 +34,64 @@ namespace SylTodo.Core.ViewModels {
             using (var db = new TodoContext()) {
                 collection = new ObservableCollection<TodoItem>(db.Items.ToList());
             }
+        }
+
+        public void SetFilter(int type, List<TodoItem> list = null) {
+            if (this.type == type) {
+                return;
+            }
+            this.type = type;
+            switch (type) {
+                case 0: // 所有
+                    foreach (TodoItem item in collection) {
+                        item.Filter = Visibility.Visible;
+                    }
+                    break;
+                case 1: // 今天
+                    foreach (TodoItem item in collection) {
+                        if (item.DueDate == DateTime.Now.Date) {
+                            item.Filter = Visibility.Visible;
+                        } else {
+                            item.Filter = Visibility.Collapsed;
+                        }
+                    }
+                    break;
+                case 2: // 最近7天
+                    foreach (TodoItem item in collection) {
+                        if (item.DueDate >= DateTime.Now.Date && item.DueDate - DateTime.Now.Date <= new TimeSpan(7, 0, 0, 0)) {
+                            item.Filter = Visibility.Visible;
+                        } else {
+                            item.Filter = Visibility.Collapsed;
+                        }
+                    }
+                    break;
+                case 5: // 已完成
+                    foreach (TodoItem item in collection) {
+                        if (item.IsChecked) {
+                            item.Filter = Visibility.Visible;
+                        } else {
+                            item.Filter = Visibility.Collapsed;
+                        }
+                    }
+                    break;
+                case 6: // 搜索
+                    foreach (TodoItem item in collection) {
+                        if (list.Contains(item)) {
+                            item.Filter = Visibility.Visible;
+                        } else {
+                            item.Filter = Visibility.Collapsed;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        public List<string> GetTitles() {
+            return collection.Select(i => i.Title).ToList();
+        }
+
+        public List<TodoItem> GetListByTitle(string title) {
+            return collection.Where(i => i.Title == title).ToList();
         }
 
         public void Add(string title) {
