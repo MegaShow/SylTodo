@@ -127,6 +127,7 @@ namespace SylTodo.UWP.Views {
                     Database.ViewModel.Add("欢迎加入希娃清单", "从今天起，希娃清单将伴你开启时间管理之旅。", DateTime.Now, "收集箱", false, bitmap);
                     Database.ViewModel.Add("你好，世界", "Never underestimate the ability of a small group of dedicated people to " +
                         "change the world.Indeed, it is the only thing that ever has.", DateTime.Now, "收集箱", false, bitmap);
+                    TodoList.Current.UpdateListViewEmptyVisibility();
                 }
                 ApplicationData.Current.LocalSettings.Values["SylTodo.Not.First.Open"] = true;
             }
