@@ -25,14 +25,13 @@ namespace SylTodo.Core.ViewModels {
                 db.Database.Migrate();
             }
             SyncContext();
-            //this.Add("你好，世界", "Never underestimate the ability of a small group of dedicated people to " +
-            //    "change the world.Indeed, it is the only thing that ever has.", new DateTime(2017, 3, 12));
-            //this.Add("欢迎加入希娃清单", "从今天起，希娃清单将伴你开启时间管理之旅。", DateTime.Now);
         }
 
         public void SyncContext() {
             using (var db = new TodoContext()) {
-                collection = new ObservableCollection<TodoItem>(db.Items.ToList());
+                List<TodoItem> list = db.Items.ToList();
+                // list.Sort((a, b) => a.DueDate == b.DueDate ? 0 : (a.DueDate > b.DueDate ? 1 : -1));
+                collection = new ObservableCollection<TodoItem>(list);
             }
         }
 
@@ -86,6 +85,10 @@ namespace SylTodo.Core.ViewModels {
             }
         }
 
+        public TodoItem GetItemById(int id) {
+            return collection.Where(i => i.Id == id).FirstOrDefault();
+        }
+
         public List<string> GetTitles() {
             return collection.Select(i => i.Title).ToList();
         }
@@ -99,7 +102,7 @@ namespace SylTodo.Core.ViewModels {
         }
 
         public void Add(string title, string description, DateTimeOffset dueDate, string category = "收集箱", bool isChecked = false, byte[] bitmap = null) {
-            AddDefault(title, String.Empty, DateTime.Now, category, isChecked, bitmap);
+            AddDefault(title, description, dueDate, category, isChecked, bitmap);
         }
 
         private void AddDefault(string title, string description, DateTimeOffset dueDate, string category, bool isChecked, byte[] bitmap) {
@@ -136,7 +139,7 @@ namespace SylTodo.Core.ViewModels {
         }
 
         public void UpdateDueDate(TodoItem item, DateTime dueDate) {
-            UpdateDefault(item.Id, item.Title, item.Description, dueDate, item.Category, item.IsChecked, item.Bitmap);
+            UpdateDefault(item.Id, item.Title, item.Description, dueDate.Date, item.Category, item.IsChecked, item.Bitmap);
         }
 
         public void UpdateBitmap(TodoItem item, byte[] bitmap) {

@@ -22,10 +22,13 @@ namespace SylTodo.UWP.Tile {
                 updater.EnableNotificationQueue(true);
                 updater.Clear();
 
-                for (int i = 0; i < 5 && i < collection.Count; i++) {
+                for (int i = 0, count = 0; count < 5 && i < collection.Count; i++) {
+                    if (collection[i].IsChecked) {
+                        continue;
+                    }
                     string path;
                     if (collection[i].Bitmap != null) {
-                        StorageFolder folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("SylTodoFolder");
+                        StorageFolder folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("SylTodoFolder", CreationCollisionOption.OpenIfExists);
                         StorageFile file = await folder.CreateFileAsync($"{i}.jpg", CreationCollisionOption.ReplaceExisting);
                         await FileIO.WriteBytesAsync(file, collection[i].Bitmap);
                         path = file.Path;
@@ -36,6 +39,7 @@ namespace SylTodo.UWP.Tile {
                     string xmlString = await File.ReadAllTextAsync("Tile/Tile.xml");
                     tileXml.LoadXml(string.Format(xmlString, collection[i].Title, collection[i].Description, collection[i].DueDate.ToString("yyyy-MM-dd"), path));
                     updater.Update(new TileNotification(tileXml));
+                    count++;
                 }
             } catch (Exception e) {
                 Debug.WriteLine($"{e.ToString()}");

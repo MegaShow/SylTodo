@@ -1,4 +1,5 @@
-﻿using SylTodo.Core.Models;
+﻿using SylTodo.Core;
+using SylTodo.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -84,6 +85,13 @@ namespace SylTodo.UWP.Views {
             }
         }
 
+        public void StateFromDetailToList() {
+            double width = Window.Current.Bounds.Width;
+            if (width >= 0 && width < 900) {
+                StateChange("OnlyListState");
+            }
+        }
+
         private void StateManage(object sender, SizeChangedEventArgs e) {
             string newState;
             if (e.NewSize.Width >= 0 && e.NewSize.Width < 900) {
@@ -102,15 +110,25 @@ namespace SylTodo.UWP.Views {
             StateChange("OnlyListState");
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e) {
+        protected override async void OnNavigatedTo(NavigationEventArgs e) {
             base.OnNavigatedTo(e);
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.State")) {
-                string state = ApplicationData.Current.LocalSettings.Values["TodoMain.State"] as string;
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.Current.State")) {
+                string state = ApplicationData.Current.LocalSettings.Values["TodoMain.Current.State"] as string;
                 if (state == "OnlyDetailState") {
                     ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
                     ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
                     StateChange("OnlyDetailState");
                 }
+            }
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SylTodo.Not.First.Open") == false) {
+                if (Database.ViewModel.Collection.Count == 0) {
+                    StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/background.png"));
+                    byte[] bitmap = await Commons.Convert.ConvertImageToByte(file);
+                    Database.ViewModel.Add("欢迎加入希娃清单", "从今天起，希娃清单将伴你开启时间管理之旅。", DateTime.Now, "收集箱", false, bitmap);
+                    Database.ViewModel.Add("你好，世界", "Never underestimate the ability of a small group of dedicated people to " +
+                        "change the world.Indeed, it is the only thing that ever has.", DateTime.Now, "收集箱", false, bitmap);
+                }
+                ApplicationData.Current.LocalSettings.Values["SylTodo.Not.First.Open"] = true;
             }
         }
     }

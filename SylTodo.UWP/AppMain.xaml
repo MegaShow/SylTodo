@@ -29,15 +29,15 @@
             <NavigationViewItem Icon="AllApps" Content="所有" Tag="All"/>
             <NavigationViewItem Icon="CalendarDay" Content="今天" Tag="Today"/>
             <NavigationViewItem Icon="CalendarWeek" Content="最近7天" Tag="Week"/>
-            <NavigationViewItem Icon="Calendar" Content="日历" Tag="Calendar"/>
-            <NavigationViewItem Icon="MoveToFolder" Content="收集箱" Tag="Collecting"/>
+            <!--<NavigationViewItem Icon="Calendar" Content="日历" Tag="Calendar"/>-->
+            <!--<NavigationViewItem Icon="MoveToFolder" Content="收集箱" Tag="Collecting"/>-->
             <NavigationViewItemSeparator/>
             <NavigationViewItem Content="已完成" Tag="Finish">
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73A;"/>
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Icon="Delete" Content="垃圾箱" Tag="Trash"/>
+            <!--<NavigationViewItem Icon="Delete" Content="垃圾箱" Tag="Trash"/>-->
         </NavigationView.MenuItems>
 
         <NavigationView.AutoSuggestBox>

@@ -7,11 +7,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -49,6 +51,8 @@ namespace SylTodo.UWP {
         private async void NavigationView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
             //先判断是否选中了setting
             if (args.IsSettingsInvoked) {
+                MessageDialog msg = new MessageDialog("Written by MegaShow", "SylTodo");
+                await msg.ShowAsync();
                 return;
             } else {
                 //选中项的内容
@@ -95,7 +99,7 @@ namespace SylTodo.UWP {
             }
         }
 
-        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
+        private async void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) {
             string txt = args.QueryText;  //输入的文本
             if (args.ChosenSuggestion != null) {
                 //从提示框中选择某一项时触发
@@ -107,6 +111,12 @@ namespace SylTodo.UWP {
                 } else if (list.Count > 1) {
                     Database.ViewModel.SetFilter(6, list);
                 }
+                StringBuilder builder = new StringBuilder();
+                foreach (TodoItem item in list) {
+                    builder.Append(String.Format("标题: {0} 截止日期: {1}\n详情: {2}\n\n", item.Title, item.DueDate.ToString("yyyy-MM-dd"), item.Description));
+                }
+                MessageDialog msg = new MessageDialog(builder.ToString(), "搜索结果");
+                await msg.ShowAsync();
             }
         }
     }

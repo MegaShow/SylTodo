@@ -75,6 +75,7 @@ namespace SylTodo.Core.Models {
             this.category = category;
             this.isChecked = isChecked;
             this.bitmap = bitmap;
+            this.filter = Visibility.Visible;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace SylTodo.UWP.Views {
     public sealed partial class TodoDetail : Page {
         public static TodoDetail Current;
         private TodoItemViewModel viewModel = Database.ViewModel;
-        private TodoItem selectedItem = null;
+        public TodoItem SelectedItem = null;
 
         public TodoDetail() {
             this.InitializeComponent();
@@ -47,48 +47,51 @@ namespace SylTodo.UWP.Views {
         }
 
         public async void EditInit(TodoItem item) {
-            if (selectedItem != null) {
+            if (SelectedItem != null) {
                 if (title.Text == String.Empty) {
                     MessageDialog msg = new MessageDialog("标题不能为空");
                     await msg.ShowAsync();
-                    title.Text = selectedItem.Title;
+                    title.Text = SelectedItem.Title;
                     return;
                 }
-                viewModel.UpdateAll(selectedItem, title.Text, description.Text, dueDate.Date.Date);
+                viewModel.UpdateAll(SelectedItem, title.Text, description.Text, dueDate.Date.Date);
             }
-            selectedItem = item;
-            title.Text = item.Title;
-            description.Text = item.Description;
-            dueDate.Date = item.DueDate;
+            SelectedItem = item;
+            if (item != null) {
+                title.Text = item.Title;
+                description.Text = item.Description;
+                dueDate.Date = item.DueDate;
+            }
         }
 
         private async void title_LostFocus(object sender, RoutedEventArgs e) {
             if (title.Text == String.Empty) {
                 MessageDialog msg = new MessageDialog("标题不能为空");
                 await msg.ShowAsync();
-                title.Text = selectedItem.Title;
+                title.Text = SelectedItem.Title;
             } else {
-                viewModel.UpdateTitle(selectedItem, title.Text);
+                viewModel.UpdateTitle(SelectedItem, title.Text);
             }
             TileGenerator.Update(Database.ViewModel.Collection);
         }
 
         private void description_LostFocus(object sender, RoutedEventArgs e) {
-            viewModel.UpdateDescription(selectedItem, description.Text);
+            viewModel.UpdateDescription(SelectedItem, description.Text);
             TileGenerator.Update(Database.ViewModel.Collection);
         }
 
         private void dueDate_LostFocus(object sender, RoutedEventArgs e) {
-            viewModel.UpdateDueDate(selectedItem, dueDate.Date.Date);
+            viewModel.UpdateDueDate(SelectedItem, dueDate.Date.Date);
             TileGenerator.Update(Database.ViewModel.Collection);
         }
 
         private void AppBarButton_Click_Delete(object sender, RoutedEventArgs e) {
-            viewModel.Remove(selectedItem);
-            selectedItem = null;
+            viewModel.Remove(SelectedItem);
+            SelectedItem = null;
             StateChange("Init");
             TodoList.Current.UpdateListViewEmptyVisibility();
             TodoMain.Current.BackgroundChange(null);
+            TodoMain.Current.StateFromDetailToList();
             TileGenerator.Update(Database.ViewModel.Collection);
         }
 
@@ -104,7 +107,7 @@ namespace SylTodo.UWP.Views {
             if (file != null) {
                 try {
                     var bitmap = await Commons.Convert.ConvertImageToByte(file);
-                    viewModel.UpdateBitmap(selectedItem, bitmap);
+                    viewModel.UpdateBitmap(SelectedItem, bitmap);
                     TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(bitmap));
                     TileGenerator.Update(Database.ViewModel.Collection);
                 } catch (Exception) {
@@ -115,15 +118,16 @@ namespace SylTodo.UWP.Views {
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e) {
-            //base.OnNavigatedTo(e);
-            //if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.State")
-            //        && ApplicationData.Current.LocalSettings.Values["TodoMain.State"] as string == "OnlyDetailState"
-            //        && ApplicationData.Current.LocalSettings.Values.ContainsKey("SelectedIndex")) {
-            //    int index = Convert.ToInt32(ApplicationData.Current.LocalSettings.Values["SelectedIndex"]);
-            //    StateChange("Edit");
-            //    EditInit(viewModel.Collection[index]);
-            //    TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(viewModel.Collection[index].Bitmap));
-            //}
+            base.OnNavigatedTo(e);
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoMain.Current.State")
+                    && ApplicationData.Current.LocalSettings.Values["TodoMain.Current.State"] as string == "OnlyDetailState"
+                    && ApplicationData.Current.LocalSettings.Values.ContainsKey("TodoDetail.Current.SelectedItem.Id")) {
+                int id = Convert.ToInt32(ApplicationData.Current.LocalSettings.Values["TodoDetail.Current.SelectedItem.Id"]);
+                StateChange("Edit");
+                TodoItem item = viewModel.GetItemById(id);
+                EditInit(item);
+                TodoMain.Current.BackgroundChange(await Commons.Convert.ConvertByteToImage(item.Bitmap));
+            }
         }
 
         private void AppBarButton_Click_Share(object sender, RoutedEventArgs e) {
@@ -134,7 +138,7 @@ namespace SylTodo.UWP.Views {
 
         private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args) {
             args.Request.Data.Properties.Title = "分享你的清单";
-            var streamReference = RandomAccessStreamReference.CreateFromStream(await Commons.Convert.ConvertByteToRandomAccessStream(selectedItem.Bitmap));
+            var streamReference = RandomAccessStreamReference.CreateFromStream(await Commons.Convert.ConvertByteToRandomAccessStream(SelectedItem.Bitmap));
             args.Request.Data.SetBitmap(streamReference);
             args.Request.Data.SetText($"{title.Text}:\n\n{description.Text}");
         }
